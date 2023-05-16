@@ -62,7 +62,7 @@ public class UBERStudent20201030
 				case Calendar.WEDNESDAY:
 					return "WED";
 				case Calendar.THURSDAY:
-					return "THU";
+					return "THR";
 				case Calendar.FRIDAY:
 					return "FRI";
 				case Calendar.SATURDAY:
@@ -75,10 +75,22 @@ public class UBERStudent20201030
 
 	public static class UBERStudent20201030Reducer extends Reducer<Text, Text, Text, Text> 
 	{
+		Text output_key = new Text();
+		Text output_value = new Text();
 
-		public void reduce(Text key, Text value, Context context) throws IOException, InterruptedException 
+		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException 
 		{
-			context.write(key, value);
+			int trips = 0;
+			int vehicles = 0;
+			for (Text val : values) {
+				StringTokenizer itr = new StringTokenizer(val.toString(), ",");
+
+				trips += Integer.parseInt(itr.nextToken().trim());
+				vehicles += Integer.parseInt(itr.nextToken().trim());
+			}
+			output_key.set(key);
+			output_value.set(trips + "," + vehicles);
+			context.write(output_key, output_value);	
 		}
 	}
 
